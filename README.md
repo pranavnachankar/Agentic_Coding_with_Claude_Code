@@ -352,7 +352,7 @@ flowchart LR
 
 ### Plan Mode in Claude Code | Ultraplan Mode in Claude Code 
 
--->> **Instructions** : https://www.notion.so/Instructions-33c2ccb4fd728016bb85d71e9d5ae3c6
+-->> **Instructions** : https://www.notion.so/Instructions-33c2ccb4fd728016bb85d71e9d5ae3c6 \
 -->> **Spec Document** : https://www.notion.so/Spec-Document-33a2ccb4fd728085bdc5da7dfd844dac
 
 
