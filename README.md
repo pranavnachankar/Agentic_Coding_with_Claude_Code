@@ -22,6 +22,11 @@
   - else go with `ollama` by running command as `ollama launch CLAUDE`
 
 
+
+------------------------------------------------------------------
+
+
+
 ## Slash commands:
 Slash commands are the shorts you type inside the CLAUDE code `session` starting with `/` that trigger a specific predefined action or workflow instantly **without writing a full prompt**
   - built-in
@@ -60,6 +65,10 @@ Slash commands are the shorts you type inside the CLAUDE code `session` starting
 - `/permission` -->> allow permissions for tools
 
 - `/voice` -->> to interact with models by voice instead typing
+
+
+
+------------------------------------------------------------------
 
 
 
@@ -115,6 +124,9 @@ Slash commands are the shorts you type inside the CLAUDE code `session` starting
 
 
 
+
+------------------------------------------------------------------
+
 ## `CLAUDE.md` | CLAUDE Code — The Most Important File 
 ### why `CLAUDE.md`?
   - LLM don't have memory
@@ -153,8 +165,8 @@ Slash commands are the shorts you type inside the CLAUDE code `session` starting
 - The generated CLAUDE.md is roughly 30% useful.
 - The remaining 70% - workflows, constraints, what to avoid, deployment targets, naming conventions - we have to write.
 
-### Content of CLAUDE.md
 
+### Content of `CLAUDE.md` :
 #### **`Project Context:`**
 A short description of the project so Claude immediately understands what it is building or modifying.
 - **Example:** This is a FastAPI backend for a health-tracking application that stores patient BMI records and exposes CRUD APIs.
@@ -201,6 +213,164 @@ Highlights critical warnings, edge cases, and things to avoid
 - Example:
   - Do not modify `database.py` unless absolutely necessary.
   - Patient IDs are provided by the client; do not auto-generate UUIDs.
+
+
+### `.claude` Folder
+- The .claude folder is Claude Code's local configuration directory that controls how Claude behaves -- either for a specific project or across all projects on your machine.
+- It stores all config related info about skills, custom slash commands, sub-agents etc.
+  - **Project-level `.claude/`** —>> scoped to one project, committed to the repo, shared with the team.
+  - **Global/User-level `~/.claude/`** —>> scoped to your machine, applies to every project, personal to you.
+- Camparision :
+| Scope            | This project only                             | Every project on your machine      |
+|------------------|-----------------------------------------------|------------------------------------|
+| Location         | `<project-root>/.claude/`                     | `~/.claude/`                       |
+| Shared with team | Yes — lives in the repo                       | No — only on your machine          |
+| Use for          | Project-specific commands, workflows, settings | Personal commands you want everywhere |
+
+
+
+
+### Types of CLAUDE.md
+- when chat will be initiated, this file will be loaded automatically if at root level and rest mentioned will loaded depends if Claude will be looking into that folder; consider it as a big project where frontend, backend and other files present.
+- Project Root - `./CLAUDE.md`:
+- Inside .claude folder - `./.claude/CLAUDE.md`
+- Local (Personal, Gitignored) - `./CLAUDE.local.md`:
+  - Create CLAUDE.local.md in your project root. Claude reads it alongside the main CLAUDE.md, and it's automatically gitignored so your personal tweaks never land in the repo.
+- Global - `~/.claude/CLAUDE.md`:
+  - Your personal preferences that apply across all projects. Things like your coding style defaults, preferred tools, or general working style go here. This user-level file is available across all your projects.
+- Subdirectory - `./some/folder/CLAUDE.md`:
+  - Starting in the current working directory, Claude Code recurses up to / and reads any CLAUDE.md or CLAUDE.local.md files it finds.
+  - This is especially convenient in large repositories.
+
+
+
+
+
+### Good Practices :
+- Start with /init, then prune aggressively
+- Commit it to git
+- Only put universally applicable things in it
+- Use emphasis sparingly for critical rules
+  - Put `IMPORTANT` whichever is
+  - **NOTE:** if everything is `IMPORTANT`, nothing is.
+- Keep it short - under 200 lines
+  - as instruction count increases, instruction-following quality decreases uniformly
+  - **Ask Rule:** Would removing this cause Claude to make mistakes?" If not, cut it.
+- Split into `.claude/rules/` files
+  ```
+  .claude/rules/
+  |-- code-style.md 
+  |-- testing.md
+  |-- security.md
+  |-- api-conventions.md
+  ```
+- Use @ imports to reference external docs
+```
+  ## API Conventions
+  See @docs/api-guidelines.md
+  ## Git Workflow
+  See @docs/contributing.md
+```
+- Use subdirectory CLAUDE.md files
+- Treat it like a living document. Build it organically, not upfront
+- Correct once, then codify
+- Audit periodically - instructions drift
+
+
+
+
+### Auto Memory
+- Auto memory is a persistent directory where Claude records learnings, patterns, and insights as it works.
+- When Claude discovers something about your project ("oh, this application uses INR instead of USD"), it saves that to auto-memory. Next session, it already knows. I more repeating yourself.
+- It lives in ~/.claude/projects/<project>/memory/:
+- Only the first 200 lines of MEMORY.md load automatically.
+
+
+
+
+-------------------------------------------------------------
+
+
+### Spec-Driven Development in Claude Code
+
+-->> THE PROBLEM :
+  - Vibe Coding!
+    - It is a modern style of programming where instead of carefully planning everything upfront, you build software by interacting with an AI assistant in a fast, conversational, and experimental way.
+- The main problem - Amount of Control
+- example issue:
+  - **Prompt** -->> build me a user auth system\
+  but agent will automatically qtns himself as and decide own the own and immplement
+    - Which framework?
+    - JWT or sessions?
+    - What are the password rules?
+    - What happens on 3 failed attempts?
+  - You get code fast, but it may not be the right code. You end up in a loop of corrections and patches, here Spec-Driven Development will help.
+
+-->> What **Spec-Driven Development ?**:
+  - Spec driven development (SDD) is a software development approach where a detailed specification document is written before any code is written.
+  - The spec acts as the single source of truth for what the system should do, and all development flows from it.
+
+
+-->> Things inside Spec-Driven Development should be:
+  - Problem Statement (why part)
+  - Functional Requirements
+  - API contracts (input, output, data shape)
+  - Constrainst
+  - Edge cases and error handling
+  - Acceptance criteria
+
+-->> work-flow of Spec-Driven Development :
+```mermaid
+flowchart LR
+    Spec[📋 Spec] --> Review1[🔍 Review]
+    Review1 --> Design[🏗️ Design]
+    Design --> Review2[🔍 Review]
+    Review2 --> Tasks[📝 Tasks]
+    Tasks --> Build[⚙️ Build]
+    Build --> Validate[✅ Validate]
+```
+
+
+-->> Vibe Coindg vs  Spec-Driven Development
+| Aspect | Vibe Coding | Spec-Driven Development |
+|----------|-------------|-------------------------|
+| **Starting Point** | A feeling / rough idea | A written specification |
+| **Who Decides Requirements** | AI infers them | You define them upfront |
+| **Control** | Low — AI leads | High — you lead |
+| **Speed to First Result** | Very fast | Slower upfront, faster overall |
+| **Code Quality** | Unpredictable | Consistent and traceable |
+| **Works Well For** | Prototypes, exploration, side projects | Production systems, teams, complex apps |
+| **Failure Mode** | Spaghetti code you don't fully understand | Over-specified, rigid if requirements change |
+| **Debugging Approach** | Ask AI to fix it | Check against the spec to find drift |
+| **Need to Understand the Code?** | Not really | Yes — you own the spec |
+
+
+
+
+
+---------------------------------------------------------------------------------------
+
+### Plan Mode in Claude Code | Ultraplan Mode in Claude Code 
+
+-->> **Instructions** : https://www.notion.so/Instructions-33c2ccb4fd728016bb85d71e9d5ae3c6
+-->> **Spec Document** : https://www.notion.so/Spec-Document-33a2ccb4fd728085bdc5da7dfd844dac
+
+
+- How to enter in the plan mode:
+  - Need to press `Shift` key two time in Claude Code terminal
+  - `/plan` command and press enter key
+  
+
+
+
+
+
+
+
+
+
+
+
 
 
 
