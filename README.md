@@ -25,8 +25,6 @@
 
 ------------------------------------------------------------------
 
-
-
 ## Slash commands:
 Slash commands are the shorts you type inside the CLAUDE code `session` starting with `/` that trigger a specific predefined action or workflow instantly **without writing a full prompt**
   - built-in
@@ -97,7 +95,7 @@ Slash commands are the shorts you type inside the CLAUDE code `session` starting
   - Subagents get their own isolated context window completely separate from the main session. Subagents return only a summary to the main context and not their full working history.
   
 
-  ![CLAUDE Context Window](./CLAUDE-context-window.png)
+![CLAUDE Context Window](https://raw.githubusercontent.com/pranavnachankar/Agentic_Coding_with_Claude_Code/main/claude-context-window.png)
   
 
 
@@ -221,6 +219,7 @@ Highlights critical warnings, edge cases, and things to avoid
   - **Project-level `.claude/`** —>> scoped to one project, committed to the repo, shared with the team.
   - **Global/User-level `~/.claude/`** —>> scoped to your machine, applies to every project, personal to you.
 - Camparision :
+
 | Scope            | This project only                             | Every project on your machine      |
 |------------------|-----------------------------------------------|------------------------------------|
 | Location         | `<project-root>/.claude/`                     | `~/.claude/`                       |
@@ -291,7 +290,7 @@ Highlights critical warnings, edge cases, and things to avoid
 -------------------------------------------------------------
 
 
-### Spec-Driven Development in Claude Code
+## Spec-Driven Development in Claude Code
 
 -->> THE PROBLEM :
   - Vibe Coding!
@@ -350,9 +349,9 @@ flowchart LR
 
 ---------------------------------------------------------------------------------------
 
-### Plan Mode in Claude Code | Ultraplan Mode in Claude Code 
+## Plan Mode in Claude Code | Ultraplan Mode in Claude Code 
 
--->> **Instructions** : https://www.notion.so/Instructions-33c2ccb4fd728016bb85d71e9d5ae3c6 \
+-->> **Instructions** : https://www.notion.so/Instructions-33c2ccb4fd728016bb85d71e9d5ae3c6
 -->> **Spec Document** : https://www.notion.so/Spec-Document-33a2ccb4fd728085bdc5da7dfd844dac
 
 
@@ -360,6 +359,147 @@ flowchart LR
   - Need to press `Shift` key two time in Claude Code terminal
   - `/plan` command and press enter key
   
+
+#### Good Practices
+- Model Selection (please select model wisely as per use-case)
+- Extended Thinking -->> https://platform.claude.com/docs/en/build-with-claude/extended-thinking
+- Effort Level [low|medium|high|max|auto] -->> https://platform.claude.com/docs/en/build-with-claude/effort
+- Ultraplan -->> https://code.claude.com/docs/en/ultraplan 
+  - Claude Ultraplan transforms complex engineering refactors into a background cloud job, bypassing local terminal bottlenecks. Triggered via the CLI, it initiates an asynchronous, 30-minute cloud-compute session running Opus 4.6 inside Anthropic's Cloud Container Runtime. Parallel sub-agents explore your repository via Git, while a critic agent filters errors to assemble a multi-file structural blueprint. Developers interact with this plan via a rich web-browser interface at claude.ai/code—allowing for granular section comments, revisions, and approval. Upon approval, the workflow provides flexible execution, letting you either create an automated cloud Pull Request or utilize a teleport sentinel value to instantly push the plan back into your active local terminal for deployment.
+
+
+
+
+
+-------------------------------------------------------------------
+
+
+## Claude Code Custom Slash Commands | Stop Repeating Prompts
+- Saved prompts invoked with a simple /command_name syntax
+- Used to execute any repeatable workflow in your project
+- Stored as Markdown files inside the .claude folder
+
+
+-->> Two types:
+  - **Project-scoped** - stored in .claude/commands/, available only within that project
+  - **User-scoped** - stored in ~/.claude/commands/, available across all your projects
+
+
+-->> Examples:
+  - /review — runs a code review checklist on the current file
+  - /commit — generates a git commit message based on staged changes
+  - /test - runs the test suite and analyzes any failures
+  - /security-scan - scans the codebase for common vulnerabilities like SQL injection or exposed credentials
+
+
+
+
+---------------------------------------------------------------------
+
+## Claude Code Skills
+
+### Why Skills:
+- Claude is a general-purpose language model.
+- It can reason, write, and code across many domains.
+- But there's a gap between general capability and reliable, high-quality output for a specific task type.
+
+
+Let's take an example - PPT generation\
+  - Claude knows how to generate a PPT on any topic\
+  - It knows what Powerpoint is\
+  - It can reason about slide structure\
+  - It knows which python lib to use\
+
+But Claude does not know a lot of things. Such as:
+  - How to handle the layout
+  - Which font to use
+  - How and where to plot charts and tables
+
+And this can happen across a lot of tasks like :
+  - Frontend development
+  - Data Analysis
+  - Writing documents
+  - Code review
+
+
+
+
+Problem - LLMs won't do well on specialized tasks!\
+Solution - Write detailed prompts! **`but`**
+  - Remember and Retype Every Time
+  - Your Context Window Gets Burned
+  - It's hard to bundle resources with prompts
+  - You Can't Share, Version, or Improve a Prompt
+  - Prompt don't compose
+
+
+
+> Skills are reusable, file-based resources that provide Claude with domain-specific expertise such as workflows, context, and best practices that transform general-purpose agents into specialists.
+
+>Unlike prompts (instructions for one-off tasks), Skills load on-demand and eliminate the need to repeatedly provide the same guidance across multiple conversations.
+
+
+
+<a href="https://github.com/pranavnachankar/Agentic_Coding_with_Claude_Code/blob/main/Claude%20Code%20Skills.png">
+  <img src="https://raw.githubusercontent.com/pranavnachankar/Agentic_Coding_with_Claude_Code/main/Claude%20Code%20Skills.png" alt="Claude Code Skills" width="600">
+</a>
+
+
+
+-->> Progressive Disclosure : https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices
+
+```
+Core idea - don't present information until the moment it's needed.
+  - Level 1: The description (always visible)
+  - Level 2: The SKILL.md body (loaded on demand)
+  - Level 3: Referenced resources (loaded if needed)
+```
+
+
+
+Based on scope:
+  1. Personal Skills - ~/.claude/skills/
+      - Personal skills are available across all your projects.
+  2. Project Skills - .claude/skills/
+      - Project skills are available across your current project.
+      - Shared with your teammates
+
+
+
+Ways to create Skills
+  - Create manually
+  - Use Claude - skill-creator skill
+  - Install from community sources
+
+Skills by Anthropic -->>https://github.com/anthropics/skills
+
+
+
+
+-------------------------------------------------------------------
+
+
+## Claude SubAgents: Solve Context & Token Cost ProblemsClaude SubAgents: Solve Context & Token Cost Problems
+
+DOC : https://code.claude.com/docs/en/sub-agents
+
+
+
+
+-------------------------------------------------------------------
+
+## Claude Custom Subagents
+
+Doc : https://code.claude.com/docs/en/sub-agents
+
+
+-------------------------------------------------------------------
+
+
+
+
+
+
 
 
 
